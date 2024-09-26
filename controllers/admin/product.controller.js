@@ -159,20 +159,17 @@ module.exports.createPOST = async (req, res) => {
     req.body.position = countRecord + 1;
   }
 
-  if (req.file) {
+  /* if (req.file) { 
     req.body.thumbnail = `/uploads/${req.file.fileName}`;
-  }
+  } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */ 
 
   console.log(req.file);
   console.log(req.body);
-
-
-  res.send("ok")
-
+  //
   const record = new Product(req.body);
   await record.save();
-  9
-  res.redirect(`/${systemConfig.prefixAdmin}/products/`)
+  
+  res.redirect(`/${systemConfig.prefixAdmin}/products/`);
 }
 
 module.exports.edit = async (req, res) => {
@@ -206,9 +203,9 @@ module.exports.editPATCH = async (req, res) => {
     req.body.position = countRecord + 1;
   }
 
-  if (req.file) {
-    req.body.thumbnail = `/uploads/${req.file.fileName}`;
-  }
+  // if (req.file) {
+  //   req.body.thumbnail = `/uploads/${req.file.fileName}`;
+  // }
 
   console.log(id);
   console.log(req.body);
