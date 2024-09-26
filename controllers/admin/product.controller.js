@@ -37,13 +37,23 @@ module.exports.index = async (req, res) => {
 
   //End phân trang
 
+  // Sắp xếp
+  const sort = {};
+  if(req.query.sortKey && req.query.sortValue) {
+    const sortKey = req.query.sortKey;
+    const sortValue = req.query.sortValue;
+
+    sort[sortKey] = sortValue;
+  } else {
+    sort["position"] = "desc";
+  }
+  // End Sắp xếp
+
   const products = await Product
     .find(find)
     .limit(limitItems)
     .skip(skip)
-    .sort({
-      position: "desc"
-    })
+    .sort(sort)
 
   res.render("admin/pages/products/index", {
     pageTitle: "Trang sản phẩm",
@@ -124,7 +134,7 @@ module.exports.permanentlyDelete = async (req, res) => {
 
   res.json({
     code: "success",
-    
+
   });
 }
 
@@ -161,14 +171,14 @@ module.exports.createPOST = async (req, res) => {
 
   /* if (req.file) { 
     req.body.thumbnail = `/uploads/${req.file.fileName}`;
-  } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */ 
+  } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */
 
   console.log(req.file);
   console.log(req.body);
   //
   const record = new Product(req.body);
   await record.save();
-  
+
   res.redirect(`/${systemConfig.prefixAdmin}/products/`);
 }
 
@@ -216,8 +226,8 @@ module.exports.editPATCH = async (req, res) => {
     deleted: false
   }, req.body);
 
-    req.flash("success", "Cập nhật thành công");
-    res.redirect("back");
+  req.flash("success", "Cập nhật thành công");
+  res.redirect("back");
 
 }
 
@@ -273,7 +283,7 @@ module.exports.recycleBIN = async (req, res) => {
   });
 }
 
-module.exports.temporaryDelete = async (req, res) => { 
+module.exports.temporaryDelete = async (req, res) => {
   await Product.updateOne({
     _id: req.body.id
   }, {
