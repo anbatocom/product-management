@@ -5,6 +5,8 @@ const flash = require('express-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const methodOverride = require('method-override')
+const path = require('path');
+
 
 
 require('dotenv').config();
@@ -39,6 +41,9 @@ app.use(flash());
 
 //override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
+
+// New Route to the TinyMCE Node module 
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 //Khai báo đường dẫn
 routeAdmin.index(app);
