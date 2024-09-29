@@ -28,7 +28,7 @@ module.exports.uploadSingle = (req, res, next) => {
     async function upload(req) {
       let result = await streamUpload(req);
       req.body[req.file.fieldname] = result.url; //req.file.fieldname = thumnail, viết tổng quát như này để code linh động hơn cho những trường hợp giá trị name của ô input khác đi
-      console.log(result);
+      // console.log(result);
       next();
     }
 

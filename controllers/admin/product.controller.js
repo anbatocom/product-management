@@ -64,9 +64,9 @@ module.exports.index = async (req, res) => {
 }
 
 module.exports.changeStatus = async (req, res) => { //req là 1 object chứa các thông tin mà bên front-end gửi về cho back-end, res là những thông tin mà bên back-end trả về front-end
-  console.log(req.body.id); // cần cài lib body-parser của npm mới có thể dùng được req
+  // console.log(req.body.id); // cần cài lib body-parser của npm mới có thể dùng được req
   // giữ liệu lấy từ front-end sẽ được lib body-parser tự động chuyển từ json -> js
-  console.log(req.body.status);
+  // console.log(req.body.status);
 
   //dùng await để chờ cập nhật
   await Product.updateOne({
@@ -84,7 +84,7 @@ module.exports.changeStatus = async (req, res) => { //req là 1 object chứa c�
 
 module.exports.changeMulti = async (req, res) => {
 
-  console.log(req.body); // cần cài lib body-parser của npm mới có thể dùng được req
+  // console.log(req.body); // cần cài lib body-parser của npm mới có thể dùng được req
   // giữ liệu lấy từ front-end sẽ được lib body-parser tự động chuyển từ json -> js
 
   switch (req.body.status) {
@@ -173,8 +173,8 @@ module.exports.createPOST = async (req, res) => {
     req.body.thumbnail = `/uploads/${req.file.fileName}`;
   } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */
 
-  console.log(req.file);
-  console.log(req.body);
+  // console.log(req.file);
+  // console.log(req.body);
   //
   const record = new Product(req.body);
   await record.save();
@@ -217,8 +217,8 @@ module.exports.editPATCH = async (req, res) => {
   //   req.body.thumbnail = `/uploads/${req.file.fileName}`;
   // }
 
-  console.log(id);
-  console.log(req.body);
+  // console.log(id);
+  // console.log(req.body);
 
 
   await Product.updateOne({

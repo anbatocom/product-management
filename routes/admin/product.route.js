@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 
+const upload = multer();
 
 const validate = require("../..//valitdates/admin/product.validate")
 
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware")
 
-var upload = multer();
 
 const controller = require("../../controllers/admin/product.controller")
 
