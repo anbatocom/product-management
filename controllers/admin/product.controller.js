@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model")
 const systemConfig = require("../../config/system")
+const ProductCategory = require("../../models/product-category.model");
 
 module.exports.index = async (req, res) => {
   const find = {
@@ -153,8 +154,13 @@ module.exports.changePosition = async (req, res) => {
 }
 
 module.exports.create = async (req, res) => {
+  const list_category = await ProductCategory.find({
+    deleted: false
+  });
+
   res.render("admin/pages/products/create.pug", {
     pageTitle: "Thêm mới sản phẩm",
+    list_category: list_category
   });
 }
 
@@ -173,10 +179,7 @@ module.exports.createPOST = async (req, res) => {
   /* if (req.file) { 
     req.body.thumbnail = `/uploads/${req.file.fileName}`;
   } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */
-
-  // console.log(req.file);
-  // console.log(req.body);
-  //
+  
   const record = new Product(req.body);
   await record.save();
 

@@ -28,7 +28,7 @@ block main
       )
         option(value="") -- Chọn danh mục --
         each item in categoryList
-          option(value=item.parent_id) #{item.title}
+          option(value=item.id) #{item.title}
           
     div(class="form-group")
       label(for="desc") Mô tả
