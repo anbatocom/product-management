@@ -187,7 +187,10 @@ module.exports.createPOST = async (req, res) => {
 }
 
 module.exports.edit = async (req, res) => {
-
+  const list_category = await ProductCategory.find({
+    deleted: false
+  });
+  
   const id = req.params.id;
 
   const product = await Product.findOne({
@@ -198,7 +201,8 @@ module.exports.edit = async (req, res) => {
 
   res.render("admin/pages/products/edit.pug", {
     pageTitle: "Chỉnh sửa sản phẩm",
-    product: product
+    product: product,
+    list_category: list_category
   });
 }
 
