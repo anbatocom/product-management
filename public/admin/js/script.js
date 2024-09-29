@@ -243,8 +243,8 @@ if(uploadImage){
     
   })
 
-  console.log(uploadImageInput);
-  console.log(uploadImagePreview);
+  // console.log(uploadImageInput);
+  // console.log(uploadImagePreview);
 }
 // End Preview ảnh khi upload
 
