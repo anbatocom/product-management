@@ -195,7 +195,7 @@ if (listInputPOS.length > 0) {
       const position = parseInt(input.value)
       const path = input.getAttribute("data-path");
       const id = input.getAttribute("itemID");
-      
+
       fetch(path, {
         headers: {
           "Content-Type": "application/json",
@@ -216,13 +216,13 @@ if (listInputPOS.length > 0) {
         })
     })
   })
-  
+
 }
 // End thay đổi vị trí bản ghi
 
 // alert-message
 const alertMessage = document.querySelector("[alert-message]")
-if(alertMessage){
+if (alertMessage) {
   setTimeout(() => {
     alertMessage.style.display = "none"
   }, 3000)
@@ -231,16 +231,16 @@ if(alertMessage){
 
 //Preview ảnh khi upload
 const uploadImage = document.querySelector("[upload-image]");
-if(uploadImage){
+if (uploadImage) {
   const uploadImageInput = uploadImage.querySelector("[upload-image-input]");
   const uploadImagePreview = uploadImage.querySelector("[upload-image-preview]");
 
   uploadImageInput.addEventListener("change", () => {
     const file = uploadImageInput.files[0];
-    if(file) {
+    if (file) {
       uploadImagePreview.src = URL.createObjectURL(file)
     }
-    
+
   })
 
   // console.log(uploadImageInput);
@@ -257,29 +257,29 @@ if (temporaryDelete_list.length > 0) {
       const isConfirm = confirm("Bạn có chắc muốn chuyển sản phẩm này vào thùng rác?")
 
       if (isConfirm) {
-      const itemID = button.getAttribute("itemID");
-      const deleted_change = button.getAttribute("statusDelete")
-      const data_path = button.getAttribute("data-path");
-      
-      const data = {
-        id: itemID,
-        deleted: deleted_change
-      };
-      console.log(data);
+        const itemID = button.getAttribute("itemID");
+        const deleted_change = button.getAttribute("statusDelete")
+        const data_path = button.getAttribute("data-path");
 
-      fetch(data_path, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "PATCH",
-        body: JSON.stringify(data) // chuyển data thành dạng json để giao tiếp với backend
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.code == "success") {
-            location.reload();
-          }
+        const data = {
+          id: itemID,
+          deleted: deleted_change
+        };
+        console.log(data);
+
+        fetch(data_path, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "PATCH",
+          body: JSON.stringify(data) // chuyển data thành dạng json để giao tiếp với backend
         })
+          .then(res => res.json())
+          .then(data => {
+            if (data.code == "success") {
+              location.reload();
+            }
+          })
       }
     })
   })
@@ -288,11 +288,11 @@ if (temporaryDelete_list.length > 0) {
 
 // Khôi phục 1 bản ghi đã bị xóa tạm thời
 const restoreButton_list = document.querySelectorAll("[resButton]");
-if(restoreButton_list.length > 0) {
+if (restoreButton_list.length > 0) {
   restoreButton_list.forEach(button => {
     button.addEventListener("click", () => {
       const isConfirm = confirm("Bạn có chắc muốn khôi phục bản ghi này");
-      if(isConfirm) {
+      if (isConfirm) {
         const id = button.getAttribute("itemID");
         const deletedStatus = button.getAttribute("deletedStatus");
         const path = button.getAttribute("data-path")
@@ -319,7 +319,7 @@ if(restoreButton_list.length > 0) {
     })
   })
 }
-  
+
 // end Khôi phục 1 bản ghi đã bị xóa tạm thời
 
 // Sắp xếp
@@ -335,23 +335,80 @@ if (sortSelect) {
       const [sortKey, sortValue] = value.split("-");
       console.log(sortKey);
       console.log(sortValue);
-      
-      url.searchParams.set("sortKey", sortKey); 
-      url.searchParams.set("sortValue", sortValue); 
+
+      url.searchParams.set("sortKey", sortKey);
+      url.searchParams.set("sortValue", sortValue);
     } else {
       url.searchParams.delete("sortKey");
       url.searchParams.delete("sortValue");
     }
 
-    location.href = url.href 
+    location.href = url.href
   })
 
   // Hiển thị lựa chọn mặc định
   const sortKeyCurrent = url.searchParams.get("sortKey")
   const sortValueCurrent = url.searchParams.get("sortValue")
-  if (sortKeyCurrent && sortValueCurrent ) {
+  if (sortKeyCurrent && sortValueCurrent) {
     sortSelect.value = `${sortKeyCurrent}-${sortValueCurrent}`;
   }
 
 }
 // End sắp xếp
+
+// Phân quyền
+const tablePermissions = document.querySelector("[table-permissions]");
+if (tablePermissions) {
+  const buttonSubmit = document.querySelector("[button-submit]")
+  buttonSubmit.addEventListener("click", () => {
+    const dataFinal = [];
+
+    const listElementRoleID = document.querySelectorAll("[role-id]");
+    listElementRoleID.forEach(elementRoleID => {
+      const roleID = elementRoleID.getAttribute("role-id");
+
+      const permissions = [];
+
+      const listInputChecked = document.querySelectorAll(`input[data-id="${roleID}"]:checked`);
+
+      listInputChecked.forEach(input => {
+        const tr = input.closest(`tr[data-name]`);
+        const name = tr.getAttribute("data-name");
+        permissions.push(name);
+      });
+      // hàm closest() là để truy vấn thẻ cha
+      dataFinal.push({
+        id: roleID,
+        permissions: permissions,
+      });
+    })
+    const path = buttonSubmit.getAttribute("data-path");
+    fetch(path, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(dataFinal) // chuyển data thành dạng json để giao tiếp với backend
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code == "success") {
+          location.reload();
+        }
+      })
+  });
+  // Hiển thị mặc định trang phân quyền
+  let dataPermissions = tablePermissions.getAttribute("table-permissions");
+  dataPermissions = JSON.parse(dataPermissions);
+  dataPermissions.forEach(item => {
+    
+    item.permissions.forEach(permission => {
+      const input = document.querySelector(`tr[data-name="${permission}"] input[data-id="${item._id}"]`)
+      input.checked = true;
+    })
+    
+  })
+  
+  // End Hiển thị mặc định trang phân quyền
+}
+// End phân quyền
