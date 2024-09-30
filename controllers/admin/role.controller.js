@@ -26,3 +26,29 @@ module.exports.createPOST = async (req, res) => {
   res.redirect(`/${systemConfig.prefixAdmin}/roles`)
   
 }
+
+module.exports.edit = async (req, res) => {
+  const id = req.params.id;
+  const role = await Role.findOne({
+    _id: id,
+    deleted: false
+  });
+
+  res.render("admin/pages/roles/edit", {
+    pageTitle: "Trang chỉnh sửa nhóm quyền",
+    role: role,
+  })
+}
+
+module.exports.editPATCH = async (req, res) => {
+  const id = req.params.id;
+
+  await Role.updateOne({
+    _id: id,
+    deleted: false,
+  }, req.body);
+
+  req.flash("success","Cập nhật thành công");
+
+  res.redirect("back");
+}
