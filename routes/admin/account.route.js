@@ -21,7 +21,14 @@ router.post(
   controller.createPOST
 );
 
+router.get('/edit/:id', controller.editDISPLAY);
 
+router.patch(
+  '/edit/:id',
+  upload.single('avatar'),
+  uploadCloud.uploadSingle, /* hàm trung gian, cần hàm next() để chạy controller tiếp theo */
+  controller.editPATCH
+);
 
 
 

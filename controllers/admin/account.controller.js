@@ -31,6 +31,7 @@ module.exports.create = async (req, res) => {
   const roles = await Role.find({
     deleted: false,
   })
+
   res.render("admin/pages/accounts/create",{
           pageTitle: "Tạo tài khoản quản trị",
           roles: roles,
@@ -41,11 +42,39 @@ module.exports.create = async (req, res) => {
 module.exports.createPOST = async (req, res) => {
   req.body.password = md5(req.body.password);
   req.body.token = generateHelper.generateRandomString(30);
-  console.log(req.body);
   
   const account = new Account(req.body);
   await account.save();
+
   req.flash("success", "Thêm tài khoản thành công");
   res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
 }
 
+module.exports.editDISPLAY = async (req, res) => {
+  
+  const roles = await Role.find({
+    deleted: false,
+  });
+
+  const account = await Account.findOne({
+    _id: req.params.id,
+    deleted: false,
+  })
+
+  res.render("admin/pages/accounts/edit",{
+          pageTitle: "Chỉnh sửa tài khoản quản trị",
+          roles: roles,
+          account: account,
+      }
+  )
+}
+
+module.exports.editPATCH = async (req, res) => {
+  await Account.updateOne({
+    _id: req.params.id,
+    deleted: false,
+  }, req.body);
+
+  req.flash("success", "Cập nhật thông tin tài khoản thành công");
+  res.redirect(`back`);
+}
