@@ -30,7 +30,9 @@ router.patch(
   controller.editPATCH
 );
 
+router.get('/change-password/:id', controller.changePassword);
 
+router.patch('/change-password/:id', controller.changePasswordPATCH);
 
 
 
