@@ -40,7 +40,7 @@ module.exports.index = async (req, res) => {
 
   // Sắp xếp
   const sort = {};
-  if(req.query.sortKey && req.query.sortValue) {
+  if (req.query.sortKey && req.query.sortValue) {
     const sortKey = req.query.sortKey;
     const sortValue = req.query.sortValue;
 
@@ -165,32 +165,38 @@ module.exports.create = async (req, res) => {
 }
 
 module.exports.createPOST = async (req, res) => {
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+  if (res.locals.role.permissions.includes("products_create")) {
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
 
-  if (req.body.position) {
-    req.body.position = parseInt(req.body.position);
+    if (req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      const countRecord = await Product.countDocuments();
+      req.body.position = countRecord + 1;
+    }
+
+    /* if (req.file) { 
+      req.body.thumbnail = `/uploads/${req.file.fileName}`;
+    } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */
+
+    const record = new Product(req.body);
+    await record.save();
+    req.flash("success", "Thêm mới thành công")
   } else {
-    const countRecord = await Product.countDocuments();
-    req.body.position = countRecord + 1;
+    req.flash("error", "Bạn không có quyền thêm mới")
   }
+  res.redirect(`/${systemConfig.prefixAdmin}/products/`)
 
-  /* if (req.file) { 
-    req.body.thumbnail = `/uploads/${req.file.fileName}`;
-  } *NOTE: đây là đoạn code lưu đường link file ảnh dưới local, do up ảnh lên cloudinary nên đoạn code này không cần nữa */
-  
-  const record = new Product(req.body);
-  await record.save();
 
-  res.redirect(`/${systemConfig.prefixAdmin}/products/`);
 }
 
 module.exports.edit = async (req, res) => {
   const list_category = await ProductCategory.find({
     deleted: false
   });
-  
+
   const id = req.params.id;
 
   const product = await Product.findOne({
@@ -207,36 +213,38 @@ module.exports.edit = async (req, res) => {
 }
 
 module.exports.editPATCH = async (req, res) => {
+  if (res.locals.role.permissions.includes("products_edit")) {
+    const id = req.params.id;
 
-  const id = req.params.id;
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
 
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+    if (req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      const countRecord = await Product.countDocuments();
+      req.body.position = countRecord + 1;
+    }
 
-  if (req.body.position) {
-    req.body.position = parseInt(req.body.position);
+    // if (req.file) {
+    //   req.body.thumbnail = `/uploads/${req.file.fileName}`;
+    // }
+
+    // console.log(id);
+    // console.log(req.body);
+
+    await Product.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+
+    req.flash("success", "Cập nhật thành công");
   } else {
-    const countRecord = await Product.countDocuments();
-    req.body.position = countRecord + 1;
+    req.flash("error", "Bạn không có quyền chỉnh sửa");
   }
-
-  // if (req.file) {
-  //   req.body.thumbnail = `/uploads/${req.file.fileName}`;
-  // }
-
-  // console.log(id);
-  // console.log(req.body);
-
-
-  await Product.updateOne({
-    _id: id,
-    deleted: false
-  }, req.body);
-
-  req.flash("success", "Cập nhật thành công");
+  
   res.redirect("back");
-
 }
 
 module.exports.recycleBIN = async (req, res) => {
@@ -320,7 +328,6 @@ module.exports.restore = async (req, res) => {
 }
 
 module.exports.detail = async (req, res) => {
-
   const id = req.params.id;
 
   const product = await Product.findOne({

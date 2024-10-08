@@ -1,5 +1,6 @@
 const systemConfig = require("../../config/system")
 const Account = require("../../models/account.model")
+const Role = require("../../models/role.model")
 
 module.exports.requireAuth = async (req, res, next) => {
   console.log(req.cookies.token);
@@ -18,6 +19,19 @@ module.exports.requireAuth = async (req, res, next) => {
     res.redirect(`/${systemConfig.prefixAdmin}/auth/login`);
     return;
   }
+
+  res.locals.user = user;
+
+  const role = await Role.findOne({
+    _id: user.role_id,
+    deleted: false,
+  })
+
+  res.locals.user = user
+  res.locals.role = role
+
+
+
   next();
   
 }
