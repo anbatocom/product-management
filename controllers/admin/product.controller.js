@@ -59,20 +59,40 @@ module.exports.index = async (req, res) => {
     .skip(skip)
     .sort(sort)
 
-  for(const item of products) {
+  for (const item of products) {
     const infoCreator = await Account.findOne({
       _id: item.createdBy,
 
     });
-    if(infoCreator){
+
+    // Tạo bởi
+    if (infoCreator) {
       item.createdBy_fullname = infoCreator.fullName
     } else {
       item.createdBy_fullname = ""
     }
-    
-    if(item.createdAt){
+
+    if (item.createdAt) {
       item.createdAtFormat = moment(item.createdAt).format("HH:mm:ss DD/MM/YY")
     }
+
+    // Tạo bởi
+    const infoUpdated = await Account.findOne({
+      _id: item.createdBy,
+
+    });
+
+    if (infoUpdated) {
+      item.updatedBy_fullname = infoUpdated.fullName
+    } else {
+      item.updatedBy_fullname = ""
+    }
+
+    if (item.updatedAt) {
+      item.updatedAtFormat = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY")
+    }
+
+
   }
 
   res.render("admin/pages/products/index", {
@@ -88,7 +108,8 @@ module.exports.changeStatus = async (req, res) => { //req là 1 object chứa c�
   // console.log(req.body.id); // cần cài lib body-parser của npm mới có thể dùng được req
   // giữ liệu lấy từ front-end sẽ được lib body-parser tự động chuyển từ json -> js
   // console.log(req.body.status);
-
+  req.body.updatedBy = res.locals.user.id;
+  req.body.updatedAt = new Date();
   //dùng await để chờ cập nhật
   await Product.updateOne({
     _id: req.body.id
@@ -107,6 +128,8 @@ module.exports.changeMulti = async (req, res) => {
 
   // console.log(req.body); // cần cài lib body-parser của npm mới có thể dùng được req
   // giữ liệu lấy từ front-end sẽ được lib body-parser tự động chuyển từ json -> js
+  req.body.updatedBy = res.locals.user.id;
+  req.body.updatedAt = new Date();
 
   switch (req.body.status) {
     case 'active':
@@ -114,7 +137,9 @@ module.exports.changeMulti = async (req, res) => {
       await Product.updateMany({
         _id: req.body.ids
       }, {
-        status: req.body.status
+        status: req.body.status,
+        updatedBy: res.locals.user.id,
+        updatedAt: new Date(),
       });
       req.flash('success', 'Đổi trạng thái thành công')
       res.json({
@@ -160,11 +185,12 @@ module.exports.permanentlyDelete = async (req, res) => {
 }
 
 module.exports.changePosition = async (req, res) => {
+  req.body.updatedBy = res.locals.user.id;
+  req.body.updatedAt = new Date();
+
   await Product.updateOne({
     _id: req.body.id
-  }, {
-    position: req.body.position
-  });
+  }, req.body);
   req.flash('success', 'Đổi vị trí thành công')
   res.json({
     code: "success",
@@ -241,6 +267,8 @@ module.exports.editPATCH = async (req, res) => {
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
+    req.body.updatedBy = res.locals.user.id;
+    req.body.updatedAt = new Date();
 
     if (req.body.position) {
       req.body.position = parseInt(req.body.position);
@@ -265,7 +293,7 @@ module.exports.editPATCH = async (req, res) => {
   } else {
     req.flash("error", "Bạn không có quyền chỉnh sửa");
   }
-  
+
   res.redirect("back");
 }
 
