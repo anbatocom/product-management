@@ -78,7 +78,7 @@ module.exports.index = async (req, res) => {
 
     // Tạo bởi
     const infoUpdated = await Account.findOne({
-      _id: item.createdBy,
+      _id: item.updatedBy,
 
     });
 
@@ -152,7 +152,9 @@ module.exports.changeMulti = async (req, res) => {
       await Product.updateMany({
         _id: req.body.ids
       }, {
-        deleted: true
+        deleted: true,
+        deletedBy: res.locals.user.id,
+        deletedAt: new Date(),
       });
       req.flash('success', 'Xóa thành công')
       res.json({
@@ -298,6 +300,7 @@ module.exports.editPATCH = async (req, res) => {
 }
 
 module.exports.recycleBIN = async (req, res) => {
+
   const find = {
     deleted: true
   };
@@ -341,6 +344,23 @@ module.exports.recycleBIN = async (req, res) => {
       position: "desc"
     })
 
+  for (const item of products) {
+    const infoDeleted = await Account.findOne({
+      _id: item.deletedBy,
+
+    });
+
+    // Xóa bởi
+    if (infoDeleted) {
+      item.deletedBy_fullname = infoDeleted.fullName
+    } else {
+      item.deletedBy_fullname = ""
+    }
+
+    if (item.deletedAt) {
+      item.deletedAtFormat = moment(item.deletedAt).format("HH:mm:ss DD/MM/YY")
+    }
+  }
   res.render("admin/pages/products/recycle-bin", {
     pageTitle: "Thùng rác",
     products: products,
@@ -350,10 +370,15 @@ module.exports.recycleBIN = async (req, res) => {
 }
 
 module.exports.temporaryDelete = async (req, res) => {
+  req.body.deletedBy = res.locals.user.id;
+  req.body.deletedAt = new Date();
+
   await Product.updateOne({
     _id: req.body.id
   }, {
-    deleted: req.body.deleted
+    deleted: req.body.deleted,
+    deletedBy: res.locals.user.id,
+    deletedAt: new Date(),
   });
 
   req.flash('success', 'Đổi trạng thái thành công')

@@ -37,6 +37,7 @@ block main
               th Hình ảnh
               th Tiêu đề
               th Giá
+              th Xóa bởi
               th Hành động
 
           tbody 
@@ -57,6 +58,9 @@ block main
                   )
                 td #{item.title}
                 td #{item.price}  
+                td  
+                  div #{item.deletedBy_fullname}
+                  div #{item.deletedAt}
                 td 
                   button(class="btn btn-primary btn-sm",
                   itemID = item.id

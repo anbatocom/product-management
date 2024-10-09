@@ -34,6 +34,8 @@ router.get('/change-password/:id', controller.changePassword);
 
 router.patch('/change-password/:id', controller.changePasswordPATCH);
 
+router.get('/my-profile', controller.myProfile);
+
 
 
 

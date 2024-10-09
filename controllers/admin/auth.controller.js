@@ -17,7 +17,6 @@ module.exports.loginPOST = async (req, res) => {
     deleted: false,
   })
 
-  console.log(user);
   
   if(!user){
     req.flash("error", "Tài khoản không tồn tại");
