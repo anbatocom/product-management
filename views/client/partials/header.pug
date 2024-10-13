@@ -1,3 +1,5 @@
+include ../mixins/sub-category.pug
+
 header 
 .header 
     .container 
@@ -9,7 +11,10 @@ header
             .col-9 
                 .inner-menu 
                     ul 
-                        li 
-                            a(href="/") Trang chủ
-                        li 
-                            a(href="/products") Sản phẩm 
+                      li 
+                        a(href="/") Trang chủ
+                      li(class="sub-menu")
+                        a(href="/products") Sản phẩm 
+                        +sub-category(allCategory)
+                                
+                           
