@@ -18,7 +18,7 @@ module.exports.index = async (req, res) => {
     item.priceNew = item.priceNew.toFixed(0);
   }
 
-  console.log(featuredProducts);
+  
   
   // Sản phẩm mới
   const productsNew = await Product

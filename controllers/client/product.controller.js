@@ -48,10 +48,30 @@ module.exports.category = async (req, res) => {
     deleted: false,
     status: "active"
   })
-  console.log(categoryData);
+
+  const allCategoryChildren = [];
+
+  const getCategoryChildren = async (parentID) => {
+    const children = await ProductCategory.find({
+      parent_id: parentID,
+      status: "active",
+      deleted: false,
+    });
+
+    for (const child of children) {
+      allCategoryChildren.push(child.id);
+
+      await getCategoryChildren(child.id)
+    }
+  };
+
+  await getCategoryChildren(categoryData.id);
+  // dùng await để chờ cho hàm thực hiện xong rồi mới chạy tiếp xuống dưới
+
+  console.log(allCategoryChildren);
 
   const products = await Product.find({
-    category_id: categoryData._id,
+    category_id: { $in: [categoryData.id, ...allCategoryChildren] },
     deleted: false,
     status: "active",
   }).sort({
