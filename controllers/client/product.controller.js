@@ -125,7 +125,6 @@ module.exports.search = async (req, res) => {
       }
   }
 
-
   res.render('client/pages/products/search.pug', {
     pageTitle: `Kết quả tìm kiếm: ${keyword}`,
     keyword: keyword,
