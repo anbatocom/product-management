@@ -58,8 +58,10 @@ module.exports.edit = async (req, res) => {
 }
 
 module.exports.editPATCH = async (req, res) => {
+  // console.log(req.body);
+  
   const id = req.params.id;
-
+  
   if (req.body.position) {
     req.body.position = parseInt(req.body.position);
   } else {
@@ -74,4 +76,5 @@ module.exports.editPATCH = async (req, res) => {
   req.flash("success", "Cập nhật thành công");
 
   res.redirect(`back`);
+  // res.send("ok")
 }
