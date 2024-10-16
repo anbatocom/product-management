@@ -24,7 +24,7 @@ module.exports.index = async (req, res) => {
     item.title = infoItem.title
     item.slug = infoItem.slug
     item.priceNew = infoItem.price
-    
+
     if (infoItem.discountPercentage > 0) {
       item.priceNew = (1 - infoItem.discountPercentage/100) * infoItem.price
       item.priceNew = item.priceNew.toFixed(0)
@@ -72,4 +72,24 @@ module.exports.addPOST = async (req, res) => {
 
   req.flash("success", "Đã thêm sản phẩm vào giỏ hàng")
   res.redirect("back")
+}
+
+module.exports.delete = async (req, res) => {
+  const cartID = req.cookies.cartId;
+  const productId = req.params.id;
+  
+  const cart = await Cart.findOne({
+    _id: cartID
+  })
+
+  const products = cart.products.filter(item => item.productID != productId);
+
+  await Cart.updateOne({
+    _id: cartID
+  }, {
+    products: products
+  })
+
+  req.flash("success", "Xóa sản phẩm khỏi giỏ hàng thành công")
+  res.redirect("back");
 }
