@@ -90,6 +90,36 @@ module.exports.delete = async (req, res) => {
     products: products
   })
 
+
   req.flash("success", "Xóa sản phẩm khỏi giỏ hàng thành công")
   res.redirect("back");
+}
+
+module.exports.updatePATCH = async (req, res) => {
+  const cartID = req.cookies.cartId;
+
+  const product = req.body;
+
+  const cart = await Cart.findOne({
+    _id: cartID
+  })
+
+  const products = cart.products
+
+  const productUpdate = products.find(item => item.productID == product.productID)
+
+  productUpdate.quantity = parseInt(product.quantity)
+
+  await Cart.updateOne({
+    _id: cartID
+  }, {
+    products: products
+  })
+
+
+  res.json({
+    code: "success",
+    message: "update thanh cong"
+  })
+  
 }

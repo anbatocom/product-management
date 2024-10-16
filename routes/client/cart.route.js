@@ -9,4 +9,6 @@ router.post('/add/:id', controller.addPOST)
 
 router.get('/delete/:id', controller.delete)
 
+router.patch('/update', controller.updatePATCH)
+
 module.exports = router;
