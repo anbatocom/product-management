@@ -7,4 +7,5 @@ router.get('/', controller.index)
 
 router.post('/', controller.orderPOST)
 
+router.get('/success/:id', controller.success)
 module.exports = router;
