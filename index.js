@@ -30,8 +30,12 @@ app.set('views', `${__dirname}/views`) //tìm đến thư mục tên là views
 app.set('view engine', 'pug') // xác định view engine có đuôi .pug
 
 app.use(express.static(`${__dirname}/public`)) // thiết lập thư mục chứa file tĩnh như js images css
+
 //Khai báo biến toàn cục cho file pug
 app.locals.prefixAdmin = systemConfig.prefixAdmin;//file: system.js - folder: config
+
+//khai báo biến toàn cục cho file js của backend
+global._io = io;
 
 //lib bodyparser dưới dạng form
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -54,9 +58,7 @@ app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce
 routeAdmin.index(app);
 routeClient.index(app);   
 
-io.on('connection', (socket) => {
-  console.log('Có 1 user kết nối', socket.id);
-})
+
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
