@@ -1,5 +1,6 @@
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
+const Order = require("../../models/order.model");
 
 module.exports.index = async (req, res) => {
 
@@ -44,10 +45,43 @@ module.exports.index = async (req, res) => {
 module.exports.orderPOST = async (req, res) => {
   const order = req.body;
   const cartID = req.cookies.cartId;
-  console.log(cartID);
+  
+  const dataOrder = {
+    fullName: order.fullName,
+    address: order.address,
+    phone: order.phone,
+    products: [],
+  }
 
-  console.log(order);
+  const cart = await Cart.findOne({
+    _id: cartID
+  })
 
-  res.send("ok")
+  const products = cart.products;
+
+  for (const item of products) {
+    const infoItem = await Product.findOne({
+      _id: item.productID
+    })
+
+    const product = {
+      productID: item.productID,
+      price: infoItem.price,
+      discountPercentage: infoItem.discountPercentage,
+      quantity: item.quantity,
+    }
+    dataOrder.products.push(product)
+  }
+ 
+  const newOrder = new Order(dataOrder);
+  await newOrder.save();
+
+  await Cart.updateOne({
+    _id: cartID
+  },{
+    products: []
+  })
+
+  res.redirect(`/order/success/${newOrder.id}`);
   
 }
