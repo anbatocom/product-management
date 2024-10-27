@@ -3,17 +3,20 @@ const productRoute = require("./product.route")
 const cartRoute = require("./cart.route")
 const chatRoute = require("./chat.route")
 const orderRoute = require("./order.route")
+const userRoute = require("./user.route")
 
 const categoryMiddleware = require("../../middlewares/client/category.middleware")
 const cartMiddleware = require("../../middlewares/client/cart.middleware")
-
+const userMiddleware = require("../../middlewares/client/user.middleware")
 module.exports.index = (app) => {
     app.use(categoryMiddleware.category)
     app.use(cartMiddleware.cart)
+    app.use(userMiddleware.infoUser)
     
-    app.use('/products/', productRoute)
-    app.use('/cart/', cartRoute)
-    app.use('/order/', orderRoute)
+    app.use('/products', productRoute)
+    app.use('/cart', cartRoute)
+    app.use('/order', orderRoute)
+    app.use('/user', userRoute)
     app.use('/', homeRoute)
     app.use('/chat', chatRoute)
     
