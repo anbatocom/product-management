@@ -57,7 +57,7 @@ module.exports.loginPOST = async (req, res) => {
   });
 
   if (!existUser) {
-    req.flash("error", "Email không tồn tại")
+    req.flash("error", "Email không tồn tại as")
     res.redirect("back")
     return;
   }
