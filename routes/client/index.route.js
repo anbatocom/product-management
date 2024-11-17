@@ -23,4 +23,9 @@ module.exports.index = (app) => {
     app.use('/', homeRoute)
     app.use('/chat', chatRoute)
     
+    app.get('*', (req, res) => {
+      res.render("client/pages/errors/404", {
+        pageTitle: "404 Not Found",
+      });
+    });
 }
